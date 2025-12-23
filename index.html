@@ -381,7 +381,7 @@
         
         // Конфигурация камеры
         const cameraConfig = {
-            position: { x: 0.35, y: 1.5, z: 6 },
+            position: { x: 0.25, y: 1.5, z: 6 },
             rotation: { x: -0.3, y: -0.05, z: 0 },
             fov: 30,
             near: 0.1,
@@ -412,10 +412,10 @@
         const touchZonesConfig = [
             {
                 id: 'zone1',
-                x: 30,
-                y: 60,
-                width: 15,
-                height: 20,
+                x: 50,
+                y: 75,
+                width: 40,
+                height: 50,
                 borderColor: '#ff0000',
                 borderWidth: 3,
                 borderStyle: 'solid',
@@ -426,44 +426,16 @@
             },
             {
                 id: 'zone2',
-                x: 70,
-                y: 40,
-                width: 10,
-                height: 15,
-                borderColor: '#00ff00',
-                borderWidth: 2,
-                borderStyle: 'dashed',
-                borderRadius: 10,
-                backgroundColor: 'rgba(0, 255, 0, 0.1)',
-                message: 'Touch Zone 2 нажата! Это монитор.',
-                enabled: true
-            },
-            {
-                id: 'zone3',
                 x: 50,
-                y: 30,
-                width: 8,
-                height: 12,
+                y: 25,
+                width: 40,
+                height: 50,
                 borderColor: '#0000ff',
-                borderWidth: 4,
-                borderStyle: 'dotted',
-                borderRadius: 0,
-                backgroundColor: 'rgba(0, 0, 255, 0.1)',
-                message: 'Touch Zone 3 нажата! Это клавиатура.',
-                enabled: true
-            },
-            {
-                id: 'zone4',
-                x: 80,
-                y: 70,
-                width: 12,
-                height: 18,
-                borderColor: '#ffff00',
-                borderWidth: 2,
+                borderWidth: 3,
                 borderStyle: 'solid',
-                borderRadius: 20,
-                backgroundColor: 'rgba(255, 255, 0, 0.1)',
-                message: 'Touch Zone 4 нажата! Это мышь.',
+                borderRadius: 5,
+                backgroundColor: 'rgba(0, 0, 255, 0.1)',
+                message: 'Touch Zone 3 нажата! Это дверь.',
                 enabled: true
             }
         ];
@@ -1254,4 +1226,4 @@
         }, 2000);
     </script>
 </body>
-</html>
+    </html>
