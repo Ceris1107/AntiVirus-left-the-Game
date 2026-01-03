@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>AntiVirus yet Invented - Меню</title>
+    <style>
+        /* Базовые сбросы */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            background-color: #0a0a0f;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            color: #ffffff;
+            touch-action: none;
+            user-select: none;
+        }
+
+        /* Контейнеры состояний */
+        .state-container {
+            display: none;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+        }
+
+        .state-container.active {
+            display: flex;
+            flex-direction: column;
+            animation: fadeIn 0.4s ease-out forwards;
+        }
+
+        /* Общие стили для всех состояний */
+        .top-bar {
+            width: 100%;
+            height: 70px;
+            background: rgba(10, 15, 30, 0.95);
+            border-bottom: 2px solid rgba(0, 150, 255, 0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 10;
+            padding: 0 20px;
+        }
+
+        .back-button {
+            position: absolute;
+            left: 25px;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(0, 100, 255, 0.2);
+            border: 2px solid rgba(0, 150, 255, 0.5);
+            color: #66aaff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s ease;
+            z-index: 11;
+        }
+
+        .back-button:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: scale(1.1);
+            border-color: rgba(0, 200, 255, 0.8);
+            box-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+        }
+
+        .page-title {
+            font-size: 28px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+            letter-spacing: 1.5px;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+        }
+
+        /* Основное меню */
+        #main-menu {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .menu-container {
+            width: 100%;
+            height: 100%;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .menu-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 150, 255, 0.3);
+        }
+
+        .menu-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            text-shadow: 0 0 10px rgba(0, 150, 255, 0.5);
+            margin-bottom: 5px;
+        }
+
+        .menu-subtitle {
+            font-size: 14px;
+            color: #88aaff;
+            font-weight: 300;
+            letter-spacing: 1px;
+        }
+
+        .menu-items {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .menu-item {
+            background: rgba(20, 25, 40, 0.8);
+            border: 1px solid rgba(0, 100, 255, 0.3);
+            border-radius: 8px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .menu-item:hover {
+            background: rgba(30, 40, 60, 0.9);
+            border-color: rgba(0, 150, 255, 0.5);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 100, 255, 0.2);
+        }
+
+        .menu-item-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 5px;
+        }
+
+        .menu-item-description {
+            font-size: 12px;
+            color: #aaccff;
+            font-weight: 300;
+        }
+
+        .menu-item-icon {
+            position: absolute;
+            right: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #66aaff;
+            font-size: 18px;
+        }
+
+        .menu-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-top: 15px;
+            border-top: 1px solid rgba(0, 150, 255, 0.2);
+            font-size: 12px;
+            color: #88aaff;
+        }
+
+        .version-info {
+            font-weight: 300;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .status-dot {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background-color: #00ff00;
+            box-shadow: 0 0 10px #00ff00;
+            animation: pulse 2s infinite;
+        }
+
+        /* Выбор главы */
+        #chapter-selection {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .chapters-container {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+        }
+
+        .chapter-navigation {
+            display: flex;
+            width: 100%;
+            max-width: 800px;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 30px;
+        }
+
+        .nav-button {
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: rgba(0, 100, 255, 0.2);
+            border: 1px solid rgba(0, 150, 255, 0.5);
+            color: #66aaff;
+            font-size: 24px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .nav-button:hover {
+            background: rgba(0, 150, 255, 0.3);
+            transform: scale(1.1);
+        }
+
+        .nav-button.disabled {
+            opacity: 0.3;
+            cursor: not-allowed;
+        }
+
+        .nav-button.disabled:hover {
+            background: rgba(0, 100, 255, 0.2);
+            transform: none;
+        }
+
+        .chapter-card-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            height: 300px;
+        }
+
+        .chapter-card {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: rgba(20, 25, 40, 0.9);
+            border: 2px solid rgba(0, 150, 255, 0.5);
+            border-radius: 12px;
+            padding: 40px;
+            cursor: pointer;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            opacity: 0;
+            transition: opacity 0.4s ease;
+        }
+
+        .chapter-card.active {
+            opacity: 1;
+        }
+
+        .chapter-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 30px rgba(0, 100, 255, 0.3);
+            border-color: rgba(0, 200, 255, 0.8);
+        }
+
+        .chapter-number {
+            font-size: 32px;
+            font-weight: 700;
+            color: #66aaff;
+            margin-bottom: 10px;
+            text-shadow: 0 0 15px rgba(0, 150, 255, 0.5);
+        }
+
+        .chapter-title {
+            font-size: 24px;
+            font-weight: 600;
+            color: #ffffff;
+            margin-bottom: 20px;
+        }
+
+        /* Выбор уровня */
+        #level-selection {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .levels-container {
+            flex: 1;
+            padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .levels-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            width: 100%;
+            max-width: 800px;
+        }
+
+        @media (max-width: 600px) {
+            .levels-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        .level-card {
+            background: rgba(20, 25, 40, 0.9);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 10px;
+            padding: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+            min-height: 180px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .level-card:hover {
+            transform: translateY(-3px);
+            background: rgba(30, 40, 60, 0.9);
+            border-color: rgba(0, 200, 255, 0.8);
+            box-shadow: 0 8px 25px rgba(0, 100, 255, 0.2);
+        }
+
+        .level-icon {
+            font-size: 48px;
+            margin-bottom: 15px;
+            color: #66aaff;
+            font-weight: bold;
+        }
+
+        .level-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #aaccff;
+        }
+
+        /* Брифинг уровня */
+        #briefing-screen {
+            background: linear-gradient(135deg, #0a0a0f 0%, #1a1a2e 100%);
+        }
+
+        .briefing-container {
+            flex: 1;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            overflow-y: auto;
+        }
+
+        .briefing-table {
+            width: 100%;
+            max-width: 800px;
+            background: rgba(20, 25, 40, 0.9);
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .briefing-table th {
+            background: rgba(0, 100, 255, 0.2);
+            padding: 20px;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            font-size: 24px;
+            font-weight: 700;
+            color: #ffffff;
+            text-align: center;
+        }
+
+        .briefing-table td {
+            padding: 15px 20px;
+            border: 1px solid rgba(0, 150, 255, 0.2);
+            vertical-align: top;
+        }
+
+        .briefing-label {
+            background: rgba(0, 50, 100, 0.2);
+            font-weight: 600;
+            color: #88aaff;
+            width: 25%;
+        }
+
+        .briefing-value {
+            color: #ffffff;
+            width: 75%;
+        }
+
+        .briefing-value.task {
+            color: #ffffff;
+        }
+
+        .briefing-value.location {
+            color: #66ffcc;
+        }
+
+        .briefing-value.time {
+            color: #ffcc66;
+        }
+
+        .briefing-value.soundtrack {
+            color: #cc66ff;
+            font-weight: 600;
+        }
+
+        .briefing-value.modules {
+            color: #ff6666;
+        }
+
+        .briefing-image {
+            width: 100%;
+            max-width: 300px;
+            height: auto;
+            margin-top: 15px;
+            border: 1px solid rgba(0, 150, 255, 0.3);
+            border-radius: 5px;
+            background: rgba(0, 0, 0, 0.3);
+        }
+
+        .start-level-button {
+            margin-top: 30px;
+            padding: 12px 30px;
+            background: rgba(0, 150, 255, 0.3);
+            border: 2px solid rgba(0, 200, 255, 0.7);
+            border-radius: 8px;
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+
+        .start-level-button:hover {
+            background: rgba(0, 200, 255, 0.4);
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 150, 255, 0.4);
+            border-color: rgba(0, 255, 255, 0.9);
+        }
+
+        /* Эффекты */
+        .scan-line {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: linear-gradient(90deg, 
+                transparent 0%, 
+                rgba(0, 200, 255, 0.8) 50%, 
+                transparent 100%);
+            animation: scan 3s linear infinite;
+            pointer-events: none;
+            z-index: 100;
+        }
+
+        .grid-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-image: 
+                linear-gradient(rgba(0, 100, 255, 0.05) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 100, 255, 0.05) 1px, transparent 1px);
+            background-size: 20px 20px;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        /* Анимации */
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+
+        @keyframes scan {
+            0% { top: 0; }
+            100% { top: 100%; }
+        }
+
+        @keyframes fadeIn {
+            from { 
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes fadeOut {
+            from { 
+                opacity: 1;
+                transform: translateY(0);
+            }
+            to { 
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+        }
+
+        /* Вспомогательные классы */
+        .hidden {
+            display: none !important;
+        }
+
+        /* Для плавного перехода между состояниями */
+        .state-container.exiting {
+            animation: fadeOut 0.4s ease-in forwards;
+        }
+    </style>
+</head>
+<body>
+    <!-- Сканирующая линия и сетка -->
+    <div class="scan-line"></div>
+    <div class="grid-overlay"></div>
+
+    <!-- Основное меню -->
+    <div id="main-menu" class="state-container active">
+        <div class="menu-container">
+            <div class="menu-header">
+                <h1 class="menu-title">AntiVirus yet Invented</h1>
+                <p class="menu-subtitle">МЕНЮ</p>
+            </div>
+            
+            <div class="menu-items">
+                <div class="menu-item" onclick="openChapterSelection()">
+                    <div class="menu-item-title">КАМПАНИЯ</div>
+                    <div class="menu-item-description">Выбрать уровень</div>
+                    <div class="menu-item-icon">▶</div>
+                </div>
+                
+                <div class="menu-item" onclick="selectMenuItem('freeplay')">
+                    <div class="menu-item-title">СВОБОДНАЯ ИГРА</div>
+                    <div class="menu-item-description">Настроить уровень</div>
+                    <div class="menu-item-icon">▶</div>
+                </div>
+                
+                <div class="menu-item" onclick="selectMenuItem('stats')">
+                    <div class="menu-item-title">РЕКОРДЫ КАМПАНИИ</div>
+                    <div class="menu-item-description">Посмотреть рекорды каждого уровня</div>
+                    <div class="menu-item-icon">⏱️</div>
+                </div>
+                
+                <div class="menu-item" onclick="selectMenuItem('settings')">
+                    <div class="menu-item-title">НАСТРОЙКИ АККАУНТА</div>
+                    <div class="menu-item-description">Никнейм, Пароль, Удаление аккаунта</div>
+                    <div class="menu-item-icon">⚙</div>
+                </div>
+                
+                <div class="menu-item" onclick="selectMenuItem('credits')">
+                    <div class="menu-item-title">ОБ ИГРЕ</div>
+                    <div class="menu-item-description">Информация о проекте</div>
+                    <div class="menu-item-icon">👥</div>
+                </div>
+            </div>
+            
+            <div class="menu-footer">
+                <div class="version-info">Версия 12.52.10.B | Build 2026.01</div>
+                <div class="status-indicator">
+                    <div class="status-dot"></div>
+                    <span>СИСТЕМА АКТИВНА</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Выбор главы (6 глав) -->
+    <div id="chapter-selection" class="state-container">
+        <div class="top-bar">
+            <button class="back-button" onclick="backToMainMenu()">←</button>
+            <div class="page-title">ВЫБОР ГЛАВЫ</div>
+        </div>
+        
+        <div class="chapters-container">
+            <div class="chapter-navigation">
+                <button id="prev-chapter" class="nav-button" onclick="changeChapter(-1)">←</button>
+                
+                <div class="chapter-card-container">
+                    <div class="chapter-card active" id="current-chapter-card" onclick="openLevelSelection()">
+                        <!-- Содержимое будет обновлено JavaScript -->
+                    </div>
+                </div>
+                
+                <button id="next-chapter" class="nav-button" onclick="changeChapter(1)">→</button>
+            </div>
+            
+            <div class="chapter-info">
+                Нажмите на карточку главы, чтобы выбрать уровень
+            </div>
+        </div>
+    </div>
+
+    <!-- Выбор уровня (4 уровня на главу) -->
+    <div id="level-selection" class="state-container">
+        <div class="top-bar">
+            <button class="back-button" onclick="backToChapterSelection()">←</button>
+            <div class="page-title">ВЫБЕРИТЕ УРОВЕНЬ</div>
+        </div>
+        
+        <div class="levels-container">
+            <div class="levels-grid" id="levels-grid">
+                <!-- Уровни будут генерироваться скриптом -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Брифинг уровня -->
+    <div id="briefing-screen" class="state-container">
+        <div class="top-bar">
+            <button class="back-button" onclick="backToLevelSelection()">←</button>
+            <div class="page-title">БРИФИНГ УРОВНЯ</div>
+        </div>
+        
+        <div class="briefing-container">
+            <table class="briefing-table">
+                <tr>
+                    <th colspan="2" id="briefing-iteration">ИТЕРАЦИЯ Α (альфа)</th>
+                </tr>
+                <tr>
+                    <td class="briefing-label">ЗАДАНИЕ:</td>
+                    <td class="briefing-value task" id="briefing-task">Всё с чего-то начинается…</td>
+                </tr>
+                <tr>
+                    <td class="briefing-label">ЛОКАЦИЯ:</td>
+                    <td class="briefing-value location" id="briefing-location">
+                        Кабинет Информатики
+                        <br>
+                        <div id="briefing-image-container">
+                            <!-- Изображение будет вставлено сюда -->
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="briefing-label">БРИФИНГ:</td>
+                    <td class="briefing-value" id="briefing-text">
+                        19.11.19XX | 5 урок | Информатика<br>
+                        "Какие-то умники установили на школьный компьютер вредоносное ПО… Ну, компьютер сам себя не вылечит, посмотрим, что тут…"
+                    </td>
+                </tr>
+                <tr>
+                    <td class="briefing-label">САУНДТРЕК:</td>
+                    <td class="briefing-value soundtrack" id="briefing-soundtrack">"Digital Dissonance" - Main Theme</td>
+                </tr>
+                <tr>
+                    <td class="briefing-label">ВРЕМЯ:</td>
+                    <td class="briefing-value time" id="briefing-time">5:00</td>
+                </tr>
+                <tr>
+                    <td class="briefing-label">КОЛИЧЕСТВО МОДУЛЕЙ:</td>
+                    <td class="briefing-value modules" id="briefing-modules">3</td>
+                </tr>
+            </table>
+            
+            <button class="start-level-button" onclick="startLevel()">
+                НАЧАТЬ УРОВЕНЬ
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // Полный греческий алфавит (24 буквы)
+        const greekAlphabet = [
+            { letter: 'Α', name: 'Альфа' },
+            { letter: 'Β', name: 'Бета' },
+            { letter: 'Γ', name: 'Гамма' },
+            { letter: 'Δ', name: 'Дельта' },
+            { letter: 'Ε', name: 'Эпсилон' },
+            { letter: 'Ζ', name: 'Дзета' },
+            { letter: 'Η', name: 'Эта' },
+            { letter: 'Θ', name: 'Тета' },
+            { letter: 'Ι', name: 'Йота' },
+            { letter: 'Κ', name: 'Каппа' },
+            { letter: 'Λ', name: 'Лямбда' },
+            { letter: 'Μ', name: 'Мю' },
+            { letter: 'Ν', name: 'Ню' },
+            { letter: 'Ξ', name: 'Кси' },
+            { letter: 'Ο', name: 'Омикрон' },
+            { letter: 'Π', name: 'Пи' },
+            { letter: 'Ρ', name: 'Ро' },
+            { letter: 'Σ', name: 'Сигма' },
+            { letter: 'Τ', name: 'Тау' },
+            { letter: 'Υ', name: 'Ипсилон' },
+            { letter: 'Φ', name: 'Фи' },
+            { letter: 'Χ', name: 'Хи' },
+            { letter: 'Ψ', name: 'Пси' },
+            { letter: 'Ω', name: 'Омега' }
+        ];
+
+        // Конфигурация всех глав и миссий
+        const config = {
+            chapters: [
+                {
+                    id: 1,
+                    number: 1,
+                    title: "Начало пути",
+                    levels: [
+                        {
+                            id: 1,
+                            name: "Альфа",
+                            letter: "Α",
+                            task: "Всё с чего-то начинается…",
+                            location: "Кабинет Информатики",
+                            briefing: "19.11.19XX | 5 урок | Информатика 'Какие-то умники установили на школьный компьютер вредоносное ПО… Ну, компьютер сам себя не вылечит, посмотрим, что тут…'",
+                            time: "5:00",
+                            modules: 3,
+                            soundtrack: "First Steps - Tutorial Theme",
+                            image: "../assets/screens/classroom.png"
+                        },
+                        {
+                            id: 2,
+                            name: "Бета",
+                            letter: "Β",
+                            task: "Поиск уязвимостей",
+                            location: "Кабинет Информатики",
+                            briefing: "19.11.19XX | 6 урок | Информатика 'Вирус распространился на другие компьютеры в классе. Нужно найти источник заражения.'",
+                            time: "7:00",
+                            modules: 4,
+                            soundtrack: "System Scan - Investigation Theme",
+                            image: "../assets/screens/classroom.png"
+                        },
+                        {
+                            id: 3,
+                            name: "Гамма",
+                            letter: "Γ",
+                            task: "Изучение поведения вируса",
+                            location: "Кабинет Информатики",
+                            briefing: "19.11.19XX | После уроков | 'Вирус пытается получить доступ к школьному серверу. Необходимо проанализировать его код и найти слабые места.'",
+                            time: "10:00",
+                            modules: 5,
+                            soundtrack: "Code Analysis - Research Theme",
+                            image: "../assets/screens/classroom.png"
+                        },
+                        {
+                            id: 4,
+                            name: "Дельта",
+                            letter: "Δ",
+                            task: "Создание антивируса",
+                            location: "Кабинет Информатики",
+                            briefing: "19.11.19XX | Вечер | 'На основе собранных данных нужно создать прототип антивируса и протестировать его на заражённых системах.'",
+                            time: "15:00",
+                            modules: 6,
+                            soundtrack: "Counterattack - Action Theme",
+                            image: "../assets/screens/classroom.png"
+                        }
+                    ]
+                },
+                {
+                    id: 2,
+                    number: 2,
+                    title: "Сеть угроз",
+                    levels: [
+                        {
+                            id: 5,
+                            name: "Эпсилон",
+                            letter: "Ε",
+                            task: "Анализ сетевого трафика",
+                            location: "Школьный сервер",
+                            briefing: "26.11.19XX | 5 урок | 'Обнаружена подозрительная активность в школьной сети. Нужно отследить источник.'",
+                            time: "8:00",
+                            modules: 4,
+                            soundtrack: "Network Intrusion - Suspense Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 6,
+                            name: "Дзета",
+                            letter: "Ζ",
+                            task: "Настройка защиты сети",
+                            location: "Сетевое оборудование",
+                            briefing: "26.11.19XX | 6 урок | 'Вирус пытается обойти базовую защиту. Необходимо настроить брандмауэр и правила доступа.'",
+                            time: "10:00",
+                            modules: 5,
+                            soundtrack: "Firewall - Defense Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 7,
+                            name: "Эта",
+                            letter: "Η",
+                            task: "Защита данных",
+                            location: "Сервер базы данных",
+                            briefing: "26.11.19XX | После уроков | 'Конфиденциальные данные учеников под угрозой. Требуется настроить шифрование и резервное копирование.'",
+                            time: "12:00",
+                            modules: 6,
+                            soundtrack: "Data Encryption - Security Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 8,
+                            name: "Тета",
+                            letter: "Θ",
+                            task: "Система аутентификации",
+                            location: "Административный сервер",
+                            briefing: "26.11.19XX | Вечер | 'Вирус пытается подобрать пароли администраторов. Нужно усилить систему аутентификации.'",
+                            time: "15:00",
+                            modules: 7,
+                            soundtrack: "Access Control - Tension Theme",
+                            image: "1001268517.jpg"
+                        }
+                    ]
+                },
+                {
+                    id: 3,
+                    number: 3,
+                    title: "Лаборатория",
+                    levels: [
+                        {
+                            id: 9,
+                            name: "Йота",
+                            letter: "Ι",
+                            task: "Исследование образца вируса",
+                            location: "Научная лаборатория",
+                            briefing: "03.12.19XX | 5 урок | 'Получен образец нового вируса. Необходимо провести полный анализ в изолированной среде.'",
+                            time: "12:00",
+                            modules: 6,
+                            soundtrack: "Laboratory Isolation - Analysis Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 10,
+                            name: "Каппа",
+                            letter: "Κ",
+                            task: "Разработка протокола защиты",
+                            location: "Исследовательский центр",
+                            briefing: "03.12.19XX | 6 урок | 'На основе анализа нужно разработать протокол защиты от подобных угроз в будущем.'",
+                            time: "14:00",
+                            modules: 7,
+                            soundtrack: "Protocol Development - Strategy Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 11,
+                            name: "Лямбда",
+                            letter: "Λ",
+                            task: "Тестирование антивируса",
+                            location: "Тестовая среда",
+                            briefing: "03.12.19XX | После уроков | 'Созданный антивирус необходимо протестировать в контролируемых условиях на различных системах.'",
+                            time: "18:00",
+                            modules: 8,
+                            soundtrack: "Test Environment - Experiment Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 12,
+                            name: "Мю",
+                            letter: "Μ",
+                            task: "Оптимизация алгоритмов",
+                            location: "Вычислительный кластер",
+                            briefing: "03.12.19XX | Вечер | 'После тестов требуется оптимизировать алгоритмы антивируса для повышения эффективности и снижения нагрузки.'",
+                            time: "20:00",
+                            modules: 8,
+                            soundtrack: "Algorithm Optimization - Precision Theme",
+                            image: "1001268517.jpg"
+                        }
+                    ]
+                },
+                {
+                    id: 4,
+                    number: 4,
+                    title: "Цифровая крепость",
+                    levels: [
+                        {
+                            id: 13,
+                            name: "Ню",
+                            letter: "Ν",
+                            task: "Проникновение в защищённую сеть",
+                            location: "Корпоративный сервер",
+                            briefing: "10.12.19XX | 5 урок | 'Вирус проник в защищённую корпоративную сеть. Необходимо найти бреши в безопасности.'",
+                            time: "15:00",
+                            modules: 7,
+                            soundtrack: "Corporate Intrusion - Stealth Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 14,
+                            name: "Кси",
+                            letter: "Ξ",
+                            task: "Обход системы обнаружения",
+                            location: "Центр мониторинга",
+                            briefing: "10.12.19XX | 6 урок | 'Вирус научился обходить системы обнаружения вторжений. Требуется найти новый метод детектирования.'",
+                            time: "18:00",
+                            modules: 8,
+                            soundtrack: "Detection Evasion - Cat and Mouse Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 15,
+                            name: "Омикрон",
+                            letter: "Ο",
+                            task: "Восстановление резервных копий",
+                            location: "Хранилище данных",
+                            briefing: "10.12.19XX | После уроков | 'Вирус повредил основные данные. Необходимо восстановить систему из резервных копий и защитить их.'",
+                            time: "22:00",
+                            modules: 9,
+                            soundtrack: "Data Recovery - Restoration Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 16,
+                            name: "Пи",
+                            letter: "Π",
+                            task: "Укрепление периметра защиты",
+                            location: "Центр управления безопасностью",
+                            briefing: "10.12.19XX | Вечер | 'После восстановления нужно полностью перестроить систему защиты, чтобы предотвратить повторное заражение.'",
+                            time: "25:00",
+                            modules: 10,
+                            soundtrack: "Perimeter Defense - Fortress Theme",
+                            image: "1001268517.jpg"
+                        }
+                    ]
+                },
+                {
+                    id: 5,
+                    number: 5,
+                    title: "Вирусное гнездо",
+                    levels: [
+                        {
+                            id: 17,
+                            name: "Ро",
+                            letter: "Ρ",
+                            task: "Поиск источника заражения",
+                            location: "Главный коммутатор",
+                            briefing: "17.12.19XX | 5 урок | 'Обнаружена масштабная атака на всю школьную сеть. Необходимо найти первоисточник заражения.'",
+                            time: "20:00",
+                            modules: 8,
+                            soundtrack: "Source Tracing - Hunter Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 18,
+                            name: "Сигма",
+                            letter: "Σ",
+                            task: "Обезвреживание ботнета",
+                            location: "Сетевой узел",
+                            briefing: "17.12.19XX | 6 урок | 'Вирус создал ботнет из заражённых компьютеров. Требуется нейтрализовать управляющий сервер.'",
+                            time: "25:00",
+                            modules: 9,
+                            soundtrack: "Botnet Neutralization - Battle Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 19,
+                            name: "Тау",
+                            letter: "Τ",
+                            task: "Анализ командного центра",
+                            location: "Скрытый сервер",
+                            briefing: "17.12.19XX | После уроков | 'Обнаружен командный центр вируса. Необходимо проанализировать его структуру и методы управления.'",
+                            time: "30:00",
+                            modules: 10,
+                            soundtrack: "Command Center - Intelligence Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 20,
+                            name: "Ипсилон",
+                            letter: "Υ",
+                            task: "Уничтожение вирусного ядра",
+                            location: "Цифровое логово",
+                            briefing: "17.12.19XX | Вечер | 'Найдено ядро вирусной системы. Требуется разработать и применить специальный инструмент для его полного уничтожения.'",
+                            time: "35:00",
+                            modules: 12,
+                            soundtrack: "Core Destruction - Final Strike Theme",
+                            image: "1001268517.jpg"
+                        }
+                    ]
+                },
+                {
+                    id: 6,
+                    number: 6,
+                    title: "Финальная битва",
+                    levels: [
+                        {
+                            id: 21,
+                            name: "Фи",
+                            letter: "Φ",
+                            task: "Прорыв через защитные системы",
+                            location: "Внешний периметр",
+                            briefing: "24.12.19XX | 5 урок | 'Вирус создал мощную систему защиты вокруг своего главного ядра. Необходимо найти способ прорваться сквозь неё.'",
+                            time: "25:00",
+                            modules: 9,
+                            soundtrack: "Perimeter Breach - Assault Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 22,
+                            name: "Хи",
+                            letter: "Χ",
+                            task: "Битва с анти-антивирусом",
+                            location: "Защитный рубеж",
+                            briefing: "24.12.19XX | 6 урок | 'Вирус разработал собственную систему защиты, которая атакует антивирусные программы. Нужно найти её уязвимости.'",
+                            time: "30:00",
+                            modules: 10,
+                            soundtrack: "Anti-Antivirus - Duel Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 23,
+                            name: "Пси",
+                            letter: "Ψ",
+                            task: "Деактивация систем самоуничтожения",
+                            location: "Центральное ядро",
+                            briefing: "24.12.19XX | После уроков | 'При приближении к ядру вирус активирует систему самоуничтожения. Необходимо деактивировать её до истечения времени.'",
+                            time: "35:00",
+                            modules: 11,
+                            soundtrack: "Self-Destruct - Countdown Theme",
+                            image: "1001268517.jpg"
+                        },
+                        {
+                            id: 24,
+                            name: "Омега",
+                            letter: "Ω",
+                            task: "Окончательное уничтожение",
+                            location: "Эпицентр заражения",
+                            briefing: "24.12.19XX | Вечер | 'Финальная битва с вирусом. Все полученные знания и инструменты должны быть использованы для полного и окончательного уничтожения угрозы.'",
+                            time: "40:00",
+                            modules: 15,
+                            soundtrack: "Final Confrontation - Epic Theme",
+                            image: "1001268517.jpg"
+                        }
+                    ]
+                }
+            ]
+        };
+
+        // Словарь греческих названий букв
+        const greekLetterNames = {};
+        greekAlphabet.forEach(item => {
+            greekLetterNames[item.letter] = item.name;
+        });
+
+        // Текущее состояние
+        let currentState = 'main-menu';
+        let currentChapter = 1;
+        let currentLevelIndex = 0;
+        let isAnimating = false;
+
+        // Универсальный переход между состояниями
+        function switchState(newState) {
+            const oldStateElement = document.getElementById(currentState);
+            const newStateElement = document.getElementById(newState);
+            
+            if (oldStateElement && oldStateElement !== newStateElement) {
+                // Запускаем анимацию fade-out для старого состояния
+                oldStateElement.classList.add('exiting');
+                
+                // После завершения анимации скрываем старое состояние и показываем новое
+                setTimeout(() => {
+                    oldStateElement.classList.remove('active', 'exiting');
+                    oldStateElement.style.display = 'none';
+                    
+                    newStateElement.style.display = 'flex';
+                    setTimeout(() => {
+                        newStateElement.classList.add('active');
+                    }, 10);
+                    
+                    currentState = newState;
+                }, 400); // Время должно совпадать с длительностью анимации fadeOut
+            } else {
+                // Если это первый запуск
+                newStateElement.style.display = 'flex';
+                newStateElement.classList.add('active');
+                currentState = newState;
+            }
+        }
+
+        // Открыть выбор главы
+        function openChapterSelection() {
+            switchState('chapter-selection');
+            updateChapterDisplay();
+        }
+
+        // Вернуться в главное меню
+        function backToMainMenu() {
+            switchState('main-menu');
+        }
+
+        // Вернуться к выбору главы
+        function backToChapterSelection() {
+            switchState('chapter-selection');
+        }
+
+        // Вернуться к выбору уровня
+        function backToLevelSelection() {
+            switchState('level-selection');
+        }
+
+        // Изменить текущую главу с последовательной анимацией fade-out/fade-in
+        function changeChapter(direction) {
+            if (isAnimating) return;
+            
+            const oldChapter = currentChapter;
+            currentChapter += direction;
+            
+            // Ограничение 1-6
+            if (currentChapter < 1) {
+                currentChapter = 1;
+                return;
+            }
+            if (currentChapter > 6) {
+                currentChapter = 6;
+                return;
+            }
+            
+            if (oldChapter !== currentChapter) {
+                isAnimating = true;
+                
+                // Сначала делаем fade-out текущей карточки
+                const card = document.getElementById('current-chapter-card');
+                card.classList.remove('active');
+                
+                // Ждем завершения fade-out (400ms)
+                setTimeout(() => {
+                    // Обновляем содержимое карточки
+                    updateChapterCard();
+                    
+                    // Делаем fade-in новой карточки
+                    setTimeout(() => {
+                        card.classList.add('active');
+                        
+                        // Обновить навигационные кнопки
+                        document.getElementById('prev-chapter').classList.toggle('disabled', currentChapter === 1);
+                        document.getElementById('next-chapter').classList.toggle('disabled', currentChapter === 6);
+                        
+                        isAnimating = false;
+                    }, 50); // Небольшая задержка перед fade-in
+                }, 400); // Время должно совпадать с длительностью fade-out
+            }
+        }
+
+        // Обновить карточку главы
+        function updateChapterCard() {
+            const chapter = config.chapters[currentChapter - 1];
+            const card = document.getElementById('current-chapter-card');
+            
+            card.innerHTML = `
+                <div class="chapter-number">ГЛАВА ${chapter.number}</div>
+                <div class="chapter-title">${chapter.title}</div>
+            `;
+        }
+
+        // Обновить отображение главы
+        function updateChapterDisplay() {
+            updateChapterCard();
+            
+            // Убедимся, что карточка видима
+            const card = document.getElementById('current-chapter-card');
+            card.classList.add('active');
+            
+            // Обновить навигационные кнопки
+            document.getElementById('prev-chapter').classList.toggle('disabled', currentChapter === 1);
+            document.getElementById('next-chapter').classList.toggle('disabled', currentChapter === 6);
+        }
+
+        // Открыть выбор уровня для текущей главы
+        function openLevelSelection() {
+            const chapterData = config.chapters[currentChapter - 1];
+            
+            // Создать уровни
+            const levelsGrid = document.getElementById('levels-grid');
+            levelsGrid.innerHTML = '';
+            
+            // Используем данные для текущей главы
+            const levels = chapterData.levels;
+            
+            for (let i = 0; i < 4; i++) {
+                const level = levels[i];
+                const letterName = greekLetterNames[level.letter] || level.name;
+                
+                const levelCard = document.createElement('div');
+                levelCard.className = 'level-card';
+                levelCard.onclick = () => openBriefing(i, level);
+                
+                levelCard.innerHTML = `
+                    <div class="level-icon">${level.letter}</div>
+                    <div class="level-name">Итерация ${letterName}</div>
+                `;
+                
+                levelsGrid.appendChild(levelCard);
+            }
+            
+            switchState('level-selection');
+        }
+
+        // Открыть брифинг уровня
+        function openBriefing(levelIndex, levelData) {
+            currentLevelIndex = levelIndex;
+            const letterName = greekLetterNames[levelData.letter] || levelData.name;
+            
+            document.getElementById('briefing-iteration').textContent = `ИТЕРАЦИЯ ${levelData.letter} (${letterName.toLowerCase()})`;
+            document.getElementById('briefing-task').textContent = levelData.task;
+            
+            // Очищаем и добавляем изображение
+            const imageContainer = document.getElementById('briefing-image-container');
+            imageContainer.innerHTML = '';
+            if (levelData.image) {
+                const img = document.createElement('img');
+                img.src = levelData.image;
+                img.alt = `Изображение для уровня ${levelData.letter}`;
+                img.className = 'briefing-image';
+                imageContainer.appendChild(img);
+            }
+            
+            document.getElementById('briefing-location').innerHTML = `
+                ${levelData.location}
+                <br>
+                <div id="briefing-image-container">
+                    ${imageContainer.innerHTML}
+                </div>
+            `;
+            document.getElementById('briefing-text').innerHTML = levelData.briefing;
+            document.getElementById('briefing-soundtrack').textContent = levelData.soundtrack;
+            document.getElementById('briefing-time').textContent = levelData.time;
+            document.getElementById('briefing-modules').textContent = levelData.modules;
+            
+            switchState('briefing-screen');
+        }
+
+        // Начать уровень
+        function startLevel() {
+            const chapterData = config.chapters[currentChapter - 1];
+            const levelData = chapterData.levels[currentLevelIndex];
+            
+            console.log(`Запуск уровня: Глава ${currentChapter}, Итерация ${levelData.letter} (${levelData.name})`);
+        }
+
+        // Обработка выбора пунктов меню
+        function selectMenuItem(itemId) {
+            // Просто убираем выделение со всех пунктов
+            document.querySelectorAll('.menu-item').forEach(item => {
+                item.classList.remove('active');
+            });
+            
+            // Визуальный эффект клика
+            const selectedElement = document.querySelector(`.menu-item[onclick*="${itemId}"]`);
+            if (selectedElement) {
+                selectedElement.style.transform = 'scale(0.98)';
+                setTimeout(() => {
+                    selectedElement.style.transform = '';
+                }, 150);
+            }
+        }
+
+        // Таймер для обновления статуса
+        setInterval(() => {
+            const dot = document.querySelector('.status-dot');
+            if (dot) {
+                const random = Math.random();
+                if (random > 0.95) {
+                    dot.style.backgroundColor = '#ff9900';
+                    dot.style.boxShadow = '0 0 10px #ff9900';
+                } else if (random > 0.9) {
+                    dot.style.backgroundColor = '#ff0000';
+                    dot.style.boxShadow = '0 0 10px #ff0000';
+                } else {
+                    dot.style.backgroundColor = '#00ff00';
+                    dot.style.boxShadow = '0 0 10px #00ff00';
+                }
+            }
+        }, 2000);
+
+        // Инициализация при загрузке
+        document.addEventListener('DOMContentLoaded', function() {
+            updateChapterDisplay();
+        });
+    </script>
+</body>
+</html>
