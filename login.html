@@ -1,0 +1,1205 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=0.5">
+    <title>Вход и регистрация</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: #000000;
+            padding: 20px;
+            overflow-x: hidden;
+        }
+
+        .background-slideshow {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: -2;
+            overflow: hidden;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-size: cover;
+            background-position: center;
+            opacity: 0;
+            transition: opacity 1.5s ease-in-out;
+        }
+
+        .slide.active {
+            opacity: 1;
+        }
+
+        .slide-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.4);
+            z-index: 1;
+        }
+
+        /* Заголовок сайта */
+        .site-header {
+            width: 100%;
+            max-width: 900px;
+            background: rgba(50, 50, 50, 0.85);
+            border-radius: 15px;
+            padding: 15px 25px;
+            margin-bottom: 25px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            z-index: 10;
+            position: relative;
+        }
+
+        .site-title {
+            color: white;
+            font-size: 2.8rem;
+            font-weight: 800;
+            letter-spacing: 1px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+            margin: 0;
+        }
+
+        .header-logo {
+            height: 70px;
+            width: 70px;
+            border-radius: 10px;
+            object-fit: cover;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3);
+            border: 2px solid rgba(255, 255, 255, 0.2);
+        }
+
+        /* Основной контейнер */
+        .container {
+            width: 100%;
+            max-width: 900px;
+            min-height: 600px;
+            background: rgba(240, 240, 240, 0.75);
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+            display: flex;
+            position: relative;
+            backdrop-filter: blur(8px);
+            animation: containerAppear 1s ease-out;
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        @keyframes containerAppear {
+            0% {
+                opacity: 0;
+                transform: translateY(30px) scale(0.95);
+            }
+            100% {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .form-container {
+            position: absolute;
+            top: 0;
+            height: 100%;
+            transition: all 0.6s ease-in-out;
+            width: 50%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 0 40px;
+        }
+
+        .sign-in-container {
+            left: 0;
+            width: 50%;
+            z-index: 2;
+        }
+
+        .sign-up-container {
+            left: 0;
+            width: 50%;
+            opacity: 0;
+            z-index: 1;
+        }
+
+        .container.right-panel-active .sign-in-container {
+            transform: translateX(100%);
+            opacity: 0;
+        }
+
+        .container.right-panel-active .sign-up-container {
+            transform: translateX(100%);
+            opacity: 1;
+            z-index: 5;
+            animation: show 0.6s;
+        }
+
+        @keyframes show {
+            0%, 49.99% {
+                opacity: 0;
+                z-index: 1;
+            }
+            50%, 100% {
+                opacity: 1;
+                z-index: 5;
+            }
+        }
+
+        .overlay-container {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            width: 50%;
+            height: 100%;
+            overflow: hidden;
+            transition: transform 0.6s ease-in-out;
+            z-index: 100;
+        }
+
+        .container.right-panel-active .overlay-container {
+            transform: translateX(-100%);
+        }
+
+        .overlay {
+            background: linear-gradient(to right, #a8e063, #56ab2f);
+            background-repeat: no-repeat;
+            background-size: cover;
+            background-position: 0 0;
+            color: #1a1a1a;
+            position: relative;
+            left: -100%;
+            height: 100%;
+            width: 200%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .container.right-panel-active .overlay {
+            transform: translateX(50%);
+        }
+
+        .overlay-panel {
+            position: absolute;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            padding: 0 40px;
+            text-align: center;
+            top: 0;
+            height: 100%;
+            width: 50%;
+            transform: translateX(0);
+            transition: transform 0.6s ease-in-out;
+        }
+
+        .overlay-left {
+            transform: translateX(-20%);
+        }
+
+        .container.right-panel-active .overlay-left {
+            transform: translateX(0);
+        }
+
+        .overlay-right {
+            right: 0;
+            transform: translateX(0);
+        }
+
+        .container.right-panel-active .overlay-right {
+            transform: translateX(20%);
+        }
+
+        h1 {
+            font-weight: 700;
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            color: #1a1a1a;
+        }
+
+        .form-title {
+            color: #1a1a1a;
+            margin-bottom: 30px;
+            font-size: 2.2rem;
+            position: relative;
+        }
+
+        .form-title:after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 60px;
+            height: 3px;
+            background: linear-gradient(to right, #a8e063, #56ab2f);
+            border-radius: 3px;
+        }
+
+        .form-subtitle {
+            color: rgba(26, 26, 26, 0.7);
+            margin: 15px 0 25px;
+            font-size: 0.95rem;
+        }
+
+        form {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .input-group {
+            position: relative;
+            margin-bottom: 25px;
+            width: 100%;
+        }
+
+        input {
+            background-color: rgba(255, 255, 255, 0.7);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            padding: 15px 15px 15px 45px;
+            border-radius: 10px;
+            width: 100%;
+            color: #1a1a1a;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #a8e063;
+            background-color: rgba(255, 255, 255, 0.9);
+            box-shadow: 0 0 0 2px rgba(168, 224, 99, 0.3);
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 1.2rem;
+        }
+
+        .char-counter {
+            position: absolute;
+            right: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: rgba(0, 0, 0, 0.5);
+            font-size: 0.8rem;
+            background: rgba(255, 255, 255, 0.7);
+            padding: 2px 8px;
+            border-radius: 10px;
+            transition: color 0.3s;
+            z-index: 2;
+        }
+
+        .char-counter.warning {
+            color: #e67e22;
+        }
+
+        .char-counter.error {
+            color: #e74c3c;
+        }
+
+        /* Перемещение иконки глаза за пределы input */
+        .password-toggle-container {
+            position: absolute;
+            right: -37px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 255, 255, 0.7);
+            border-radius: 50%;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            z-index: 3;
+        }
+
+        .password-toggle-container:hover {
+            background: rgba(255, 255, 255, 0.9);
+            transform: translateY(-50%) scale(1.1);
+        }
+
+        .password-toggle {
+            color: rgba(0, 0, 0, 0.6);
+            font-size: 1.1rem;
+        }
+
+        button {
+            background: linear-gradient(to right, #a8e063, #56ab2f);
+            color: #1a1a1a;
+            border: none;
+            padding: 16px 45px;
+            border-radius: 10px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 10px;
+            width: 100%;
+            letter-spacing: 0.5px;
+            box-shadow: 0 5px 15px rgba(86, 171, 47, 0.3);
+        }
+
+        button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(86, 171, 47, 0.4);
+        }
+
+        button:active {
+            transform: translateY(-1px);
+        }
+
+        button:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .ghost {
+            background: transparent;
+            border: 2px solid #1a1a1a;
+            box-shadow: none;
+            color: #1a1a1a;
+        }
+
+        .ghost:hover {
+            background: rgba(26, 26, 26, 0.1);
+        }
+
+        .username-availability {
+            font-size: 0.8rem;
+            margin-top: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .available {
+            color: #27ae60;
+        }
+
+        .unavailable {
+            color: #e74c3c;
+        }
+
+        /* Адаптивность */
+        @media (max-width: 950px) {
+            .site-header {
+                max-width: 95%;
+                padding: 12px 20px;
+            }
+            
+            .site-title {
+                font-size: 2.2rem;
+            }
+            
+            .header-logo {
+                height: 60px;
+                width: 60px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-top: 10px;
+            }
+            
+            .site-header {
+                max-width: 450px;
+                margin-bottom: 20px;
+                gap: 15px;
+            }
+            
+            .container {
+                flex-direction: column;
+                height: auto;
+                max-width: 450px;
+                margin-top: 0;
+            }
+
+            .form-container {
+                position: relative;
+                width: 100%;
+                height: auto;
+                padding: 40px 30px;
+            }
+
+            .sign-in-container,
+            .sign-up-container {
+                position: relative;
+                width: 100%;
+                height: auto;
+                opacity: 1;
+                transform: none;
+            }
+
+            .overlay-container {
+                display: none;
+            }
+
+            .container.right-panel-active .sign-in-container {
+                transform: none;
+                opacity: 0;
+                display: none;
+            }
+
+            .container.right-panel-active .sign-up-container {
+                transform: none;
+                opacity: 1;
+                display: block;
+            }
+
+            .form-title {
+                font-size: 1.8rem;
+            }
+
+            h1 {
+                font-size: 2rem;
+            }
+            
+            /* На мобильных устройствах возвращаем иконку глаза внутрь input */
+            .password-toggle-container {
+                right: 10px;
+                background: transparent;
+                border: none;
+                width: 30px;
+                height: 30px;
+            }
+            
+            .password-toggle-container:hover {
+                transform: translateY(-50%) scale(1);
+                background: transparent;
+            }
+            
+            .char-counter {
+                right: 45px; /* Сдвигаем счетчик левее, чтобы не перекрывался */
+            }
+        }
+
+        @media (max-width: 480px) {
+            .form-container {
+                padding: 30px 20px;
+            }
+
+            .form-title {
+                font-size: 1.6rem;
+            }
+
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .site-title {
+                font-size: 1.8rem;
+            }
+            
+            .header-logo {
+                height: 50px;
+                width: 50px;
+            }
+
+            input {
+                padding: 12px 12px 12px 40px;
+            }
+            
+            .password-toggle-container {
+                right: 8px;
+            }
+            
+            .char-counter {
+                right: 40px;
+                font-size: 0.7rem;
+            }
+        }
+
+        .loading {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.9);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+            flex-direction: column;
+            color: white;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid rgba(255, 255, 255, 0.1);
+            border-radius: 50%;
+            border-top-color = #a8e063;
+            animation: spin 1s ease-in-out infinite;
+            margin-bottom: 20px;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+        
+        /* Для десктопов - скрываем иконку глаза при наведении на input, чтобы не мешала */
+        @media (min-width: 769px) {
+            .input-group:hover .password-toggle-container {
+                opacity: 1;
+            }
+            
+            .password-toggle-container {
+                opacity: 0.7;
+                transition: opacity 0.3s ease;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Заголовок сайта -->
+    <div class="site-header">
+        <h1 class="site-title">AntiVirus yet Invented</h1>
+        <img class="header-logo" id="header-logo" src="" alt="Логотип">
+    </div>
+
+    <!-- Слайд-шоу фоновых изображений -->
+    <div class="background-slideshow" id="background-slideshow">
+        <!-- Слайды будут добавлены через JavaScript -->
+        <div class="slide-overlay"></div>
+    </div>
+
+    <!-- Загрузочный экран -->
+    <div class="loading" id="loading">
+        <div class="loading-spinner"></div>
+        <p>Загрузка...</p>
+    </div>
+
+    <!-- Основной контейнер -->
+    <div class="container" id="container">
+        <!-- Форма регистрации -->
+        <div class="form-container sign-up-container">
+            <form action="#" id="signup-form">
+                <h2 class="form-title">Создать аккаунт</h2>
+                <p class="form-subtitle">Введите данные для регистрации</p>
+                
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" placeholder="Никнейм" id="signup-username" maxlength="20" required>
+                    <span class="char-counter" id="username-counter">0/20</span>
+                    <div class="username-availability" id="username-availability">
+                        <i class="fas fa-info-circle"></i>
+                        <span>Введите никнейм</span>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" placeholder="Пароль" id="signup-password" maxlength="30" required>
+                    <span class="char-counter" id="password-counter">0/30</span>
+                    <div class="password-toggle-container" id="toggle-password-signup-container">
+                        <i class="fas fa-eye password-toggle" id="toggle-password-signup"></i>
+                    </div>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" placeholder="Подтвердите пароль" id="signup-confirm-password" maxlength="30" required>
+                    <span class="char-counter" id="confirm-password-counter">0/30</span>
+                    <div class="password-toggle-container" id="toggle-confirm-password-container">
+                        <i class="fas fa-eye password-toggle" id="toggle-confirm-password"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" id="signup-button">Зарегистрироваться</button>
+            </form>
+        </div>
+        
+        <!-- Форма входа -->
+        <div class="form-container sign-in-container">
+            <form action="#" id="signin-form">
+                <h2 class="form-title">Войти в аккаунт</h2>
+                <p class="form-subtitle">Введите ваши данные для входа</p>
+                
+                <div class="input-group">
+                    <i class="fas fa-user input-icon"></i>
+                    <input type="text" placeholder="Никнейм" id="signin-username" maxlength="20" required>
+                    <span class="char-counter" id="signin-username-counter">0/20</span>
+                </div>
+                
+                <div class="input-group">
+                    <i class="fas fa-lock input-icon"></i>
+                    <input type="password" placeholder="Пароль" id="signin-password" maxlength="30" required>
+                    <span class="char-counter" id="signin-password-counter">0/30</span>
+                    <div class="password-toggle-container" id="toggle-password-signin-container">
+                        <i class="fas fa-eye password-toggle" id="toggle-password-signin"></i>
+                    </div>
+                </div>
+                
+                <button type="submit" id="signin-button">Войти</button>
+            </form>
+        </div>
+        
+        <!-- Панель переключения -->
+        <div class="overlay-container">
+            <div class="overlay">
+                <div class="overlay-panel overlay-left">
+                    <h1>С возвращением!</h1>
+                    <p>Чтобы оставаться на связи с нами, пожалуйста, войдите под своей учетной записью</p>
+                    <button class="ghost" id="signIn">Войти</button>
+                </div>
+                <div class="overlay-panel overlay-right">
+                    <h1>Привет, друг!</h1>
+                    <p>Введите свои данные и начните путешествие вместе с нами</p>
+                    <button class="ghost" id="signUp">Зарегистрироваться</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Массив изображений для слайд-шоу (можно добавить свои пути)
+        const backgroundImages = [
+            "../assets/screens/menu.png",
+            "../assets/screens/classroom.png",
+            "../assets/screens/office.png",
+            "../assets/screens/lab.png",
+            "../assets/screens/computer.png"
+        ];
+        
+        // Путь к логотипу в заголовке
+        const logoPath = "../assets/logo-background.jpg";
+        
+        // Запасные изображения на случай, если указанные не загрузятся
+        const fallbackImages = [
+            "https://images.unsplash.com/photo-1439066615861-d1af74d74000?ixlib=rb-4.0.3&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D&auto=format&fit=crop&w=1974&q=80"
+        ];
+        
+        // Загрузка изображений и создание слайд-шоу
+        document.addEventListener('DOMContentLoaded', function() {
+            const loadingScreen = document.getElementById('loading');
+            const slideshowContainer = document.getElementById('background-slideshow');
+            const headerLogo = document.getElementById('header-logo');
+            const body = document.querySelector('body');
+            
+            // Показываем экран загрузки
+            loadingScreen.style.display = 'flex';
+            
+            let currentImages = [];
+            let currentIndex = 0;
+            let slideInterval;
+            let imagesLoaded = 0;
+            
+            // Загружаем логотип
+            function loadLogo() {
+                const logoImg = new Image();
+                
+                logoImg.onload = function() {
+                    headerLogo.src = logoPath;
+                    console.log('Логотип успешно загружен:', logoPath);
+                };
+                
+                logoImg.onerror = function() {
+                    // Если логотип не загрузился, попробуем загрузить запасное изображение
+                    console.warn('Не удалось загрузить логотип по пути:', logoPath);
+                    
+                    // Пробуем загрузить запасной логотип
+                    const fallbackLogo = new Image();
+                    fallbackLogo.onload = function() {
+                        headerLogo.src = 'https://via.placeholder.com/70x70/a8e063/000000?text=LOGO';
+                        console.log('Загружен запасной логотип');
+                    };
+                    fallbackLogo.onerror = function() {
+                        // Если и запасной не загрузился, оставляем логотип пустым, но не скрываем
+                        console.warn('Не удалось загрузить даже запасной логотип');
+                        // Можно установить цветной фон вместо изображения
+                        headerLogo.style.backgroundColor = '#a8e063';
+                        headerLogo.style.display = 'flex';
+                        headerLogo.style.alignItems = 'center';
+                        headerLogo.style.justifyContent = 'center';
+                        headerLogo.style.color = '#000';
+                        headerLogo.style.fontWeight = 'bold';
+                        headerLogo.textContent = 'LOGO';
+                    };
+                    
+                    fallbackLogo.src = 'https://via.placeholder.com/70x70/a8e063/000000?text=LOGO';
+                };
+                
+                // Начинаем загрузку логотипа
+                logoImg.src = logoPath;
+            }
+            
+            // Загружаем фоновые изображения
+            function loadBackgroundImages() {
+                const loadedImages = [];
+                let loadedCount = 0;
+                const totalToLoad = backgroundImages.length;
+                
+                // Если нет изображений для загрузки, устанавливаем черный фон
+                if (totalToLoad === 0) {
+                    setBlackBackground();
+                    return;
+                }
+                
+                // Проверяем каждое изображение
+                backgroundImages.forEach((imageSrc, index) => {
+                    const img = new Image();
+                    
+                    img.onload = function() {
+                        // Изображение загрузилось успешно
+                        loadedImages.push({
+                            src: imageSrc,
+                            loaded: true
+                        });
+                        loadedCount++;
+                        imagesLoaded++;
+                        
+                        if (loadedCount === totalToLoad) {
+                            finishLoading(loadedImages);
+                        }
+                    };
+                    
+                    img.onerror = function() {
+                        // Изображение не загрузилось, используем запасное
+                        loadedImages.push({
+                            src: fallbackImages[index % fallbackImages.length],
+                            loaded: false
+                        });
+                        loadedCount++;
+                        
+                        if (loadedCount === totalToLoad) {
+                            finishLoading(loadedImages);
+                        }
+                    };
+                    
+                    img.src = imageSrc;
+                });
+                
+                // Таймаут: если через 5 секунд ни одно изображение не загрузилось, устанавливаем черный фон
+                setTimeout(() => {
+                    if (imagesLoaded === 0 && loadedImages.length === 0) {
+                        setBlackBackground();
+                    }
+                }, 5000);
+            }
+            
+            function setBlackBackground() {
+                // Устанавливаем черный фон
+                body.style.backgroundColor = "#000000";
+                
+                // Скрываем экран загрузки
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 800);
+            }
+            
+            function finishLoading(images) {
+                // Если ни одно изображение не загрузилось, устанавливаем черный фон
+                if (images.length === 0 || images.every(img => !img.loaded)) {
+                    setBlackBackground();
+                    return;
+                }
+                
+                currentImages = images;
+                
+                // Создаем слайды
+                images.forEach((image, index) => {
+                    const slide = document.createElement('div');
+                    slide.className = 'slide';
+                    slide.style.backgroundImage = `url('${image.src}')`;
+                    slide.dataset.index = index;
+                    
+                    if (index === 0) {
+                        slide.classList.add('active');
+                    }
+                    
+                    slideshowContainer.appendChild(slide);
+                });
+                
+                // Запускаем слайд-шоу
+                startSlideshow();
+                
+                // Скрываем экран загрузки
+                setTimeout(() => {
+                    loadingScreen.style.opacity = '0';
+                    setTimeout(() => {
+                        loadingScreen.style.display = 'none';
+                    }, 500);
+                }, 800);
+            }
+            
+            function startSlideshow() {
+                // Устанавливаем интервал для автоматической смены слайдов
+                slideInterval = setInterval(() => {
+                    nextSlide();
+                }, 5000); // Меняем слайд каждые 5 секунд
+            }
+            
+            function nextSlide() {
+                if (currentImages.length <= 1) return;
+                
+                changeSlide((currentIndex + 1) % currentImages.length);
+            }
+            
+            function changeSlide(newIndex) {
+                const slides = document.querySelectorAll('.slide');
+                const currentSlide = slides[currentIndex];
+                const nextSlide = slides[newIndex];
+                
+                // Затемняем текущий слайд
+                currentSlide.style.transition = 'opacity 1.5s ease-in-out';
+                currentSlide.classList.remove('active');
+                
+                // Пауза перед появлением следующего
+                setTimeout(() => {
+                    // Показываем следующий слайд
+                    nextSlide.classList.add('active');
+                    
+                    // Обновляем индекс
+                    currentIndex = newIndex;
+                }, 1500); // Пауза 1.5 секунды
+            }
+            
+            // Загружаем логотип и фоновые изображения
+            loadLogo();
+            loadBackgroundImages();
+        });
+
+        // Переключение между формами входа и регистрации
+        const signUpButton = document.getElementById('signUp');
+        const signInButton = document.getElementById('signIn');
+        const container = document.getElementById('container');
+
+        signUpButton.addEventListener('click', () => {
+            container.classList.add('right-panel-active');
+        });
+
+        signInButton.addEventListener('click', () => {
+            container.classList.remove('right-panel-active');
+        });
+
+        // Счетчики символов для никнейма при регистрации
+        const usernameInput = document.getElementById('signup-username');
+        const usernameCounter = document.getElementById('username-counter');
+        const usernameAvailability = document.getElementById('username-availability');
+        
+        usernameInput.addEventListener('input', function() {
+            const username = this.value;
+            const count = username.length;
+            usernameCounter.textContent = `${count}/20`;
+            
+            if (count > 15) {
+                usernameCounter.classList.add('warning');
+                usernameCounter.classList.remove('error');
+            } else if (count === 20) {
+                usernameCounter.classList.remove('warning');
+                usernameCounter.classList.add('error');
+            } else {
+                usernameCounter.classList.remove('warning', 'error');
+            }
+            
+            // Проверка доступности никнейма (имитация)
+            checkUsernameAvailability(username);
+        });
+        
+        function checkUsernameAvailability(username) {
+            const icon = usernameAvailability.querySelector('i');
+            const text = usernameAvailability.querySelector('span');
+            
+            if (username.length === 0) {
+                icon.className = 'fas fa-info-circle';
+                usernameAvailability.className = 'username-availability';
+                text.textContent = 'Введите никнейм';
+                return;
+            }
+            
+            if (username.length < 3) {
+                icon.className = 'fas fa-exclamation-circle';
+                usernameAvailability.className = 'username-availability';
+                text.textContent = 'Слишком короткий (мин. 3 символа)';
+                return;
+            }
+            
+            // Имитация проверки доступности
+            // В реальном приложении здесь был бы запрос к серверу
+            const unavailableUsernames = ['admin', 'user', 'test', 'guest', 'root'];
+            const isAvailable = !unavailableUsernames.includes(username.toLowerCase()) && 
+                               !username.includes(' ') &&
+                               /^[a-zA-Z0-9_]+$/.test(username);
+            
+            if (isAvailable) {
+                icon.className = 'fas fa-check-circle available';
+                usernameAvailability.className = 'username-availability available';
+                text.textContent = 'Никнейм доступен';
+            } else {
+                icon.className = 'fas fa-times-circle unavailable';
+                usernameAvailability.className = 'username-availability unavailable';
+                
+                if (unavailableUsernames.includes(username.toLowerCase())) {
+                    text.textContent = 'Никнейм занят';
+                } else if (username.includes(' ')) {
+                    text.textContent = 'Не используйте пробелы';
+                } else if (!/^[a-zA-Z0-9_]+$/.test(username)) {
+                    text.textContent = 'Только буквы, цифры и _';
+                } else {
+                    text.textContent = 'Никнейм недоступен';
+                }
+            }
+        }
+
+        // Счетчик для пароля регистрации
+        const passwordInput = document.getElementById('signup-password');
+        const passwordCounter = document.getElementById('password-counter');
+        
+        passwordInput.addEventListener('input', function() {
+            const count = this.value.length;
+            passwordCounter.textContent = `${count}/30`;
+            
+            if (count > 25) {
+                passwordCounter.classList.add('warning');
+                passwordCounter.classList.remove('error');
+            } else if (count === 30) {
+                passwordCounter.classList.remove('warning');
+                passwordCounter.classList.add('error');
+            } else {
+                passwordCounter.classList.remove('warning', 'error');
+            }
+        });
+
+        // Счетчик для подтверждения пароля
+        const confirmPasswordInput = document.getElementById('signup-confirm-password');
+        const confirmPasswordCounter = document.getElementById('confirm-password-counter');
+        
+        confirmPasswordInput.addEventListener('input', function() {
+            const count = this.value.length;
+            confirmPasswordCounter.textContent = `${count}/30`;
+            
+            if (count > 25) {
+                confirmPasswordCounter.classList.add('warning');
+                confirmPasswordCounter.classList.remove('error');
+            } else if (count === 30) {
+                confirmPasswordCounter.classList.remove('warning');
+                confirmPasswordCounter.classList.add('error');
+            } else {
+                confirmPasswordCounter.classList.remove('warning', 'error');
+            }
+            
+            // Проверка совпадения паролей
+            checkPasswordMatch();
+        });
+
+        // Счетчик для никнейма при входе
+        const signinUsernameInput = document.getElementById('signin-username');
+        const signinUsernameCounter = document.getElementById('signin-username-counter');
+        
+        signinUsernameInput.addEventListener('input', function() {
+            const count = this.value.length;
+            signinUsernameCounter.textContent = `${count}/20`;
+            
+            if (count > 15) {
+                signinUsernameCounter.classList.add('warning');
+                signinUsernameCounter.classList.remove('error');
+            } else if (count === 20) {
+                signinUsernameCounter.classList.remove('warning');
+                signinUsernameCounter.classList.add('error');
+            } else {
+                signinUsernameCounter.classList.remove('warning', 'error');
+            }
+        });
+
+        // Счетчик для пароля входа
+        const signinPasswordInput = document.getElementById('signin-password');
+        const signinPasswordCounter = document.getElementById('signin-password-counter');
+        
+        signinPasswordInput.addEventListener('input', function() {
+            const count = this.value.length;
+            signinPasswordCounter.textContent = `${count}/30`;
+            
+            if (count > 25) {
+                signinPasswordCounter.classList.add('warning');
+                signinPasswordCounter.classList.remove('error');
+            } else if (count === 30) {
+                signinPasswordCounter.classList.remove('warning');
+                signinPasswordCounter.classList.add('error');
+            } else {
+                signinPasswordCounter.classList.remove('warning', 'error');
+            }
+        });
+
+        // Переключение видимости пароля
+        const togglePasswordSignup = document.getElementById('toggle-password-signup');
+        const togglePasswordSignupContainer = document.getElementById('toggle-password-signup-container');
+        
+        const toggleConfirmPassword = document.getElementById('toggle-confirm-password');
+        const toggleConfirmPasswordContainer = document.getElementById('toggle-confirm-password-container');
+        
+        const togglePasswordSignin = document.getElementById('toggle-password-signin');
+        const togglePasswordSigninContainer = document.getElementById('toggle-password-signin-container');
+        
+        togglePasswordSignupContainer.addEventListener('click', function() {
+            const type = passwordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            passwordInput.setAttribute('type', type);
+            togglePasswordSignup.classList.toggle('fa-eye');
+            togglePasswordSignup.classList.toggle('fa-eye-slash');
+        });
+        
+        toggleConfirmPasswordContainer.addEventListener('click', function() {
+            const type = confirmPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            confirmPasswordInput.setAttribute('type', type);
+            toggleConfirmPassword.classList.toggle('fa-eye');
+            toggleConfirmPassword.classList.toggle('fa-eye-slash');
+        });
+        
+        togglePasswordSigninContainer.addEventListener('click', function() {
+            const type = signinPasswordInput.getAttribute('type') === 'password' ? 'text' : 'password';
+            signinPasswordInput.setAttribute('type', type);
+            togglePasswordSignin.classList.toggle('fa-eye');
+            togglePasswordSignin.classList.toggle('fa-eye-slash');
+        });
+
+        // Проверка совпадения паролей
+        function checkPasswordMatch() {
+            const password = passwordInput.value;
+            const confirmPassword = confirmPasswordInput.value;
+            const signupButton = document.getElementById('signup-button');
+            
+            if (confirmPassword.length > 0 && password !== confirmPassword) {
+                confirmPasswordInput.style.borderColor = '#e74c3c';
+                signupButton.disabled = true;
+            } else if (confirmPassword.length > 0) {
+                confirmPasswordInput.style.borderColor = '#27ae60';
+                signupButton.disabled = false;
+            } else {
+                confirmPasswordInput.style.borderColor = 'rgba(0, 0, 0, 0.1)';
+                signupButton.disabled = false;
+            }
+        }
+
+        // Обработка формы регистрации
+        document.getElementById('signup-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Получаем данные формы
+            const username = document.getElementById('signup-username').value;
+            const password = document.getElementById('signup-password').value;
+            const confirmPassword = document.getElementById('signup-confirm-password').value;
+            
+            // Простая валидация
+            if (username.length < 3) {
+                alert('Никнейм должен содержать не менее 3 символов');
+                return;
+            }
+            
+            if (password.length < 6) {
+                alert('Пароль должен содержать не менее 6 символов');
+                return;
+            }
+            
+            if (password !== confirmPassword) {
+                alert('Пароли не совпадают');
+                return;
+            }
+            
+            // Здесь можно добавить вашу логику регистрации
+            const loadingScreen = document.getElementById('loading');
+            loadingScreen.querySelector('p').textContent = 'Регистрация...';
+            loadingScreen.style.display = 'flex';
+            loadingScreen.style.opacity = '1';
+            
+            // Имитация загрузки
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                    // Переключаем на форму входа после успешной регистрации
+                    container.classList.remove('right-panel-active');
+                }, 500);
+            }, 1500);
+        });
+
+        // Обработка формы входа
+        document.getElementById('signin-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Получаем данные формы
+            const username = document.getElementById('signin-username').value;
+            const password = document.getElementById('signin-password').value;
+            
+            // Простая валидация
+            if (username.length < 1) {
+                alert('Введите никнейм');
+                return;
+            }
+            
+            if (password.length < 1) {
+                alert('Введите пароль');
+                return;
+            }
+            
+            // Здесь можно добавить вашу логику входа
+            const loadingScreen = document.getElementById('loading');
+            loadingScreen.querySelector('p').textContent = 'Вход в систему...';
+            loadingScreen.style.display = 'flex';
+            loadingScreen.style.opacity = '1';
+            
+            // Имитация загрузки
+            setTimeout(() => {
+                loadingScreen.style.opacity = '0';
+                setTimeout(() => {
+                    loadingScreen.style.display = 'none';
+                }, 500);
+            }, 1500);
+        });
+
+        // Инициализация при загрузке
+        window.addEventListener('load', function() {
+            // Запускаем проверку доступности никнейма
+            checkUsernameAvailability('');
+            
+            // Запускаем проверку совпадения паролей
+            checkPasswordMatch();
+        });
+    </script>
+</body>
+</html>
